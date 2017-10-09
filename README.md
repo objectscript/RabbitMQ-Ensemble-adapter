@@ -18,5 +18,10 @@ Ensemble adapter for RabbitMQ
    Set sc = gateway.%Import(class)
    Write ##class(%Dictionary.CompiledClass).%ExistsId(class)
 6. In the namespace `isc.rabbitmq.API` class should be present and compiled.
-7. Import this project and compile.
+7. Import [this project](https://github.com/intersystems-ru/RabbitMQ-Ensemble-adapter/releases) and compile.
 8. For samples refer to the test production `RabbitMQ.Production`.
+
+
+## Development
+
+Development is done on [Cache-Tort-Git UDL fork](https://github.com/MakarovS96/cache-tort-git)
