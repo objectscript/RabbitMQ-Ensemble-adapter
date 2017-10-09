@@ -16,7 +16,7 @@ Ensemble adapter for RabbitMQ
    Set gateway = ##class(%Net.Remote.Gateway).%New() 
    Set sc = gateway.%Connect("localhost", PORT, $Namespace, 2, classPath)
    Set sc = gateway.%Import(class)
-   Write ##class(%Dictionary.CompiledClass).%ExistsId(class)```
+   Write ##class(%Dictionary.CompiledClass).%ExistsId(class)
 6. In the namespace `isc.rabbitmq.API` class should be present and compiled.
 7. Import this project and compile.
 8. For samples refer to the test production `RabbitMQ.Production`.
