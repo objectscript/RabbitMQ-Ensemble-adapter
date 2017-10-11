@@ -9,7 +9,8 @@ Method OnMessage(request As Ens.StringRequest, response As Ens.Response) As %Sta
 {
 	#Dim sc As %Status = $$$OK
 	Set response = ##class(Ens.Response).%New()
-	quit ..Adapter.SendMessage(request.StringValue)
+	Set sc = ..Adapter.SendMessage(request.StringValue)
+	Quit sc
 }
 
 }

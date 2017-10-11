@@ -28,7 +28,18 @@ Property Priority As %String;
 Property Timestamp As %String;
 
 /// Could be either string or stream
-Property Body As %String;
+Property Body(MAXLEN = "") [ Transient ];
+
+Method BodyGet() [ CodeMode = expression ]
+{
+$select(..BodyString'="":..BodyString, 1:..BodyStream)
+}
+
+/// Body if it's a string
+Property BodyString As %String(MAXLEN = "");
+
+/// Body if it's a stream
+Property BodyStream As %Stream.GlobalCharacter;
 
 Storage Default
 {
@@ -77,6 +88,12 @@ Storage Default
 </Value>
 <Value name="15">
 <Value>Body</Value>
+</Value>
+<Value name="16">
+<Value>BodyString</Value>
+</Value>
+<Value name="17">
+<Value>BodyStream</Value>
 </Value>
 </Data>
 <DataLocation>^RabbitMQ.MessageD</DataLocation>
