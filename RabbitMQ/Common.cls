@@ -11,8 +11,17 @@ Property VirtualHost As %String [ InitialExpression = "/" ];
 
 Property Queue As %String;
 
-/// Config Name of the Java Gateway service controlling the Java Gateway server this Operation will use.
+/// Config Name of the Java Gateway service controlling the Java Gateway server this item will use.
+/// Alternatively use JGHost and JGPort Settings, to specify Java gateway outside of Ensemble scope.
 Property JGService As %String;
+
+/// Hostname of the Java Gateway server this item will use.
+/// Alternatively use JGService Setting, to specify Java gateway inside Ensemble.
+Property JGHost As %String;
+
+/// Port of the Java Gateway server this item will use.
+/// Alternatively use JGService Setting, to specify Java gateway inside Ensemble.
+Property JGPort As %Integer;
 
 /// Gateway connection
 Property JGW As %Net.Remote.Gateway;
@@ -31,7 +40,7 @@ Property Encoding As %String;
 Property ClassPath As %String(MAXLEN = 32000);
 
 /// These are the production settings for this object
-Parameter SETTINGS = "Host:Basic,Port:Basic,VirtualHost:Basic,Queue:Basic,Credentials:Basic:credentialsSelector,JGService:Basic:selector?context={Ens.ContextSearch/ProductionItems?targets=0&productionName=@productionId},ClassPath:Basic,Encoding:Basic";
+Parameter SETTINGS = "Host:Basic,Port:Basic,VirtualHost:Basic,Queue:Basic,Credentials:Basic:credentialsSelector,JGHost:Java Gateway,JGPort:Java Gateway,JGService:Java Gateway:selector?context={Ens.ContextSearch/ProductionItems?targets=0&productionName=@productionId},ClassPath:Basic,Encoding:Basic";
 
 /// Connect to running JGW 
 Method Connect() As %Status
@@ -44,8 +53,14 @@ Method Connect() As %Status
 
     // get a connection handle and connect
     Set gateway = ##class(%Net.Remote.Gateway).%New()
-	Set host = ##class(Ens.Director).GetHostSettingValue(..JGService, "Address")
-	Set port = ##class(Ens.Director).GetHostSettingValue(..JGService, "Port")
+    If ..JGService'="" {
+		Set host = ##class(Ens.Director).GetHostSettingValue(..JGService, "Address")
+		Set port = ##class(Ens.Director).GetHostSettingValue(..JGService, "Port")
+    } Else {
+	    Set host = ..JGHost
+		Set port = ..JGPort
+    }
+    
     Set sc = gateway.%Connect(host, port, $namespace, timeout, classPath)
 
     If $$$ISOK(sc) {

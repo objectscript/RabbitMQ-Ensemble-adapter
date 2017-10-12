@@ -1,11 +1,12 @@
 Class RabbitMQ.OutboundAdapter Extends (Ens.OutboundAdapter, RabbitMQ.Common)
 {
 
+/// Establish gateway connection and init java API.
 Method OnInit() As %Status
 {
 	Set sc = $$$OK
-	Quit:..JGService="" $$$ERROR($$$GeneralError,"Specify JGService setting")
-	Quit:'##class(Ens.Director).IsItemEnabled(..JGService) $$$ERROR($$$GeneralError, $$$FormatText("Java Gateway Service: '%1' is down",..JGService))
+	Quit:((..JGService="") && ((..JGHost="") || (..JGPort = ""))) $$$ERROR($$$GeneralError,"Specify JGService setting or JGHost and JGPort settings")
+	Quit:((..JGService'="") && '##class(Ens.Director).IsItemEnabled(..JGService)) $$$ERROR($$$GeneralError, $$$FormatText("Java Gateway Service: '%1' is down",..JGService))
 	Set sc = ..Connect()
 	Quit:$$$ISERR(sc) sc
 	Set sc = ..ConnectToRabbitMQ()
