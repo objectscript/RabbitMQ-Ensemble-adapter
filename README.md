@@ -128,9 +128,6 @@ Everything is the same as above, except you call `sendMessageToQueue` method and
 
 Messages are always read from the default queue (specified at creation of the `api` object). Message body can be received as text or as a stream.
 
-
-`props` should have 15 elements in the case message mody would be returned as a stream, and 16 if it would be returned as a string. In that case 16th element would be message body.
-
 #### Reading message as a stream
 
 First you need to prepare `props` to pass by reference into Java and then call `readMessageStream`:
@@ -149,7 +146,6 @@ Set msg = api.readMessageStream(.props)
 
 #### Reading message as a string
 
-
 ```
 #Dim api As isc.rabbitmq.API
 #Dim msg As %GlobalBinaryStream
@@ -157,9 +153,11 @@ Set msg = api.readMessageStream(.props)
 Set props = api.readMessageString()
 ```
 
-`props` would be filled with message metainformation, not that you don't need to init it on InterSystems side before calling RabbitMQ.
+`props` would be filled with message metainformation, note that you don't need to initialize it on the InterSystems side before calling RabbitMQ.
 
 #### Props
+
+Elements appearing in `props`. All of them besides first and second are optional. Conversion from list into `RabbitMQ.Message` is available in the `ListToMessage` method of `RabbitMQ.InboundAdapter` class.
 
 | Position | Name            | Description                                                   |
 |----------|-----------------|---------------------------------------------------------------|
