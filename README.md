@@ -26,7 +26,7 @@ Ensemble adapter for RabbitMQ
 
 Development is done on [Cache-Tort-Git UDL fork](https://github.com/MakarovS96/cache-tort-git)
 
-## Use
+## Usage
 
 Check `RabbitMQ.Utils` for sample code. The main class is `isc.rabbitmq.API`. It has the following methods.
 
@@ -148,12 +148,11 @@ Set msg = api.readMessageStream(.props)
 
 ```
 #Dim api As isc.rabbitmq.API
-#Dim msg As %GlobalBinaryStream
 #Dim props As %ListOfDataTypes
 Set props = api.readMessageString()
 ```
 
-`props` would be filled with message metainformation, note that you don't need to initialize it on the InterSystems side before calling RabbitMQ.
+`props` would be filled with message metainformation and message body, note that you don't need to initialize it on the InterSystems side before calling RabbitMQ.
 
 #### Props
 
