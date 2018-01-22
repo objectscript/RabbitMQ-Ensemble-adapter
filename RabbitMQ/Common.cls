@@ -82,7 +82,7 @@ Method ConnectToRabbitMQ() As %Status
 	}
 	
 	Try {
-		Set ..API = ##class(isc.rabbitmq.API).%New(..JGW, ..Host, ..Port, user, pass, ..VirtualHost, ..Queue)
+		Set ..API = ##class(isc.rabbitmq.API).%New(..JGW, ..Host, ..Port, user, pass, ..VirtualHost, ..Queue, $$$YES)
 	} Catch ex {		
 		Set sc = $$$ADDSC(ex.AsStatus(),$g(%objlasterror))
 	}
