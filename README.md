@@ -56,7 +56,7 @@ Check `RabbitMQ.Utils` for sample code. The main class is `isc.rabbitmq.API`. It
 | msg           | byte[]           | %GlobalBinaryStream | Text          | Yes                                           | Message body                            |
 | correlationId | String           | %String             | CorrelationId | Required only with messageId                  | Correlation identifier                  |
 | messageId     | String           | %String             | MessageId     | Required only with correlationId              | Message identifier                      |
-| props         | String[]         | %ListOfDataTypes    | -             | Yes. Should have 15 elements                  | List of message properties              |
+| props         | String[]         | %ListOfDataTypes    | -             | Yes                                           | List of message properties              |
 | api           | isc.rabbitmq.API | isc.rabbitmq.API    | -             | -                                             | API object                              |
 
 ### Initialization
