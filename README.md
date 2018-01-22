@@ -25,3 +25,33 @@ Ensemble adapter for RabbitMQ
 ## Development
 
 Development is done on [Cache-Tort-Git UDL fork](https://github.com/MakarovS96/cache-tort-git)
+
+## Use
+
+Check `RabbitMQ.Utils` for sample code. The main class is `isc.rabbitmq.API`. It has the following methods.
+
+| Method             | Arguments                                           | Returns | Description                                                                                                                 |
+|--------------------|-----------------------------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------|
+| %OnNew             | host, port, user, pass, virtualHost, queue, durable | api     | Creates new connection to RabbitMQ                                                                                          |
+| sendMessage        | msg, correlationId, messageId                       | null    | Sends message to default queue (as specified in %OnNew)                                                                     |
+| sendMessageToQueue | queue, msg, correlationId, messageId                | null    | Sends message to the specified queue                                                                                        |
+| readMessageString  | -                                                   | result  | Reads message from default queue. Returns list of message properties (including message text)                               |
+| readMessageStream  | result                                              | msg     | Reads message from default queue. Returns message text as array and result - is populated with a list of message properties |
+| close              | -                                                   | -       | Closes the connection                                                                                                       |
+
+Arguments:
+
+| Argument      | Java type        | InterSystems type   | Value         | Required                                      | Description                             |
+|---------------|------------------|---------------------|---------------|-----------------------------------------------|-----------------------------------------|
+| host          | String           | %String             | localhost     | Yes                                           | Address of RabbitMQ server              |
+| port          | int              | %Integer            | -1            | Yes                                           | RabbitMQ listener port                  |
+| user          | String           | %String             | guest         | Yes                                           | Username                                |
+| pass          | String           | %String             | guest         | Yes                                           | Password                                |
+| virtualHost   | String           | %String             | /             | Yes                                           | Virtual host                            |
+| queue         | String           | %String             | Test          | Yes                                           | Queue name                              |
+| durable       | int              | %Integer            | 1             | Required only if you want to create new queue | The queue will survive a server restart |
+| msg           | byte[]           | %GlobalBinaryStream | Text          | Yes as argument                               | Message body                            |
+| correlationId | String           | %String             | CorrelationId | Required only with messageId                  | Correlation identifier                  |
+| messageId     | String           | %String             | MessageId     | Required only with correlationId              | Message identifier                      |
+| result        | String[]         | %ListOfDataTypes    | -             | Yes as argument. Should have 16 elements      | List of message properties              |
+| api           | isc.rabbitmq.API | isc.rabbitmq.API    | -             | -                                             | API object                              |
