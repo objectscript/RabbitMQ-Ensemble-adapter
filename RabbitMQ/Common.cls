@@ -9,7 +9,13 @@ Property Port As %Integer [ InitialExpression = -1 ];
 
 Property VirtualHost As %String [ InitialExpression = "/" ];
 
+/// Outbound adapter only (ignored for inbound adapter)
+/// If Exchange is not set, then Queue name.
+/// If Exchange is set, then Routing key.
 Property Queue As %String;
+
+/// Exchange name. Optional, empty by default.
+Property Exchange As %String;
 
 /// Config Name of the Java Gateway service controlling the Java Gateway server this item will use.
 /// Alternatively use JGHost and JGPort Settings, to specify Java gateway outside of Ensemble scope.
@@ -82,8 +88,8 @@ Method ConnectToRabbitMQ() As %Status
 	}
 	
 	Try {
-		Set ..API = ##class(isc.rabbitmq.API).%New(..JGW, ..Host, ..Port, user, pass, ..VirtualHost, ..Queue, $$$YES)
-	} Catch ex {		
+		Set ..API = ##class(isc.rabbitmq.API).%New(..JGW, ..Host, ..Port, user, pass, ..VirtualHost, ..Queue, $$$YES, ..Exchange)
+	} Catch ex {
 		Set sc = $$$ADDSC(ex.AsStatus(),$g(%objlasterror))
 	}
 	

@@ -1,6 +1,8 @@
 Class RabbitMQ.OutboundAdapter Extends (Ens.OutboundAdapter, RabbitMQ.Common)
 {
 
+Parameter SETTINGS = "Exchange:Basic";
+
 /// Establish gateway connection and init java API.
 Method OnInit() As %Status
 {
