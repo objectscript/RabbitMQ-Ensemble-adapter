@@ -34,7 +34,7 @@ Check `RabbitMQ.Utils` for sample code. The main class is `isc.rabbitmq.API`. It
 
 | Method             | Arguments                                           | Returns | Description                                                                                                                 |
 |--------------------|-----------------------------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------|
-| %OnNew             | gateway, host, port, user, pass, virtualHost, queue, durable | api     | Creates new connection to RabbitMQ                                                                                          |
+| %OnNew             | gateway, host, port, user, pass, virtualHost, queue, durable, exchange | api     | Creates new connection to RabbitMQ                                                                                          |
 | sendMessage        | msg, correlationId, messageId                       | null    | Sends message to default queue (as specified in %OnNew)                                                                     |
 | sendMessageToQueue | queue, msg, correlationId, messageId                | null    | Sends message to the specified queue                                                                                        |
 | readMessageString  | -                                                   | props   | Reads message from default queue. Returns list of message properties (including message text)                               |
@@ -53,6 +53,7 @@ Check `RabbitMQ.Utils` for sample code. The main class is `isc.rabbitmq.API`. It
 | virtualHost   | String           | %String             | /             | Yes                                           | Virtual host                            |
 | queue         | String           | %String             | Test          | Yes                                           | Queue name                              |
 | durable       | int              | %Integer            | 1             | Required only if you want to create new queue | The queue will survive a server restart |
+| exchange      | String           | %String             | Test          | No                                            | Exchange name. Provide only for  sending messages. Modifies the meaning of queue property (if exchange is present, then queue means routing key)|
 | msg           | byte[]           | %GlobalBinaryStream | Text          | Yes                                           | Message body                            |
 | correlationId | String           | %String             | CorrelationId | Required only with messageId                  | Correlation identifier                  |
 | messageId     | String           | %String             | MessageId     | Required only with correlationId              | Message identifier                      |
