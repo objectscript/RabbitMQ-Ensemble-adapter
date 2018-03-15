@@ -58,14 +58,44 @@ ClassMethod ReadMsg(pMsgLen = 32000) As %Status
 		
 		#Dim stream As %Stream.Object
         Set stream = api.readMessageStream(.list)
-        Write !,"Body: "
-        Do stream.OutputToDevice()
-        Write !
+        set body = stream.Read()
+        Write !,"Body: ", body,!
+
         
         Zw list
 
         Set sc= gateway.%Disconnect()
     } Catch ex {
+        Set sc = $$$ADDSC(ex.AsStatus(), $g(%objlasterror))
+    }
+
+    Quit sc
+}
+
+/// Read one message.
+/// Write $System.Status.GetErrorText(##class(RabbitMQ.Utils).ReadMsgString())
+ClassMethod ReadMsgString(pMsgLen = 32000) As %Status
+{
+    #Dim gateway as %Net.Remote.Gateway
+    #Dim exception as %Exception.AbstractException
+
+    Set sc = $$$OK
+    Try {
+	    
+        Set gateway = ..Connect()
+        #Dim api As isc.rabbitmq.API
+        Set api = ..GetAPI(gateway)
+
+		#Dim list As %ListOfDataTypes
+        Set list = api.readMessageString()
+        
+        Write !,"Body: ",list.GetAt(16),!
+        
+        Zw list
+
+        Set sc= gateway.%Disconnect()
+    } Catch ex {
+	    break
         Set sc = $$$ADDSC(ex.AsStatus(), $g(%objlasterror))
     }
 
