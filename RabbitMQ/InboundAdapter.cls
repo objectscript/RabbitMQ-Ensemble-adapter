@@ -95,7 +95,7 @@ ClassMethod ListToMessage(list As %ListOfDataTypes) As RabbitMQ.Message
 /// Decode message body. May be full body or only a piece. 
 Method DecodeMessageBody(body As %String) As %String
 {
-	Set:..Encoding'="" body = $zcvt(body, "I", ..Encoding)
+	Set:..Encoding'="" body = $zcvt(body, "O", ..Encoding)
 	Quit body
 }
 
