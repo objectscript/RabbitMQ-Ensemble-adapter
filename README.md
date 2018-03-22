@@ -4,7 +4,7 @@ Ensemble adapter for RabbitMQ
 ## Installation
 
 1. Install [java 1.8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html).
-2. Build [RabbitMQ-Ensemble-javaapi](https://github.com/intersystems-ru/RabbitMQ-Ensemble-javaapi) or download [latest binary](https://github.com/intersystems-ru/RabbitMQ-Ensemble-javaapi/releases).
+2. Get the JAR: build [RabbitMQ-Ensemble-javaapi](https://github.com/intersystems-ru/RabbitMQ-Ensemble-javaapi) or download [latest jar](https://github.com/intersystems-ru/RabbitMQ-Ensemble-javaapi/releases).
 3. Create (or use any existing one) Java gateway. To create one go to SMP > System Administration > Configuration > Connectivity > Object Gateways. Remember the `Port` value.
 4. Start Java Gateway. 
 5. In a terminal in a target namespace execute:
