@@ -28,21 +28,36 @@ Method OnTearDown() As %Status
 /// Get Messages from RabbitMQ queue.
 Method OnTask() As %Status
 {
-	Set sc = $$$OK
+	#Dim sc As %Status = $$$OK 
 	
 	Set messageCount = 1
 	
 	While messageCount > 0 {
+		Set sc = ..IsOpen()
+		Quit:$$$ISERR(sc)
+		
 		// List containing metainformation and possibly body (in the case of string interaction) of the RabbitMQ message 
 		#Dim messageList As %ListOfDataTypes 
 		
-		If ..BodyClass = "" {
-			Set messageList = ..API.readMessageString()
-		} Else {
-			#Dim tempStream As %Library.GlobalBinaryStream
-			Set messageList = ##class(%ListOfDataTypes).%New()
-			For i=1:1:15 Do messageList.Insert("")
-			Set tempStream = ..API.readMessageStream(.messageList)
+		Set messageList = ##class(%ListOfDataTypes).%New()
+		For i=1:1:15 Do messageList.Insert("")
+
+		Try {
+			If ..BodyClass = "" {
+				Set messageList = ..API.readMessageString()
+			} Else {
+				#Dim tempStream As %Library.GlobalBinaryStream
+				Set tempStream = ..API.readMessageStream(.messageList)
+			}
+		} Catch ex {
+			#Dim ex As %Exception.General
+			If ($ZE["<ZJGTW>") {
+				Set sc = ..IsOpen()
+				Set:$$$ISERR(sc) sc = $$$ADDSC(sc, ex.AsStatus())
+			} Else {
+				Set sc = ex.AsStatus()
+			}
+			Quit:$$$ISERR(sc)
 		}
 		
 		Set messageLength = messageList.GetAt(1)

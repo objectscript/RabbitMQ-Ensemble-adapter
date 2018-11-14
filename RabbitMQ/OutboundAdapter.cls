@@ -36,10 +36,23 @@ Method SendMessage(message As %Stream.Object) As %Status
 		Do stream.Write(..EncodeMessageBody(message))
 	}
 	
-	Try {
-		Do ..API.sendMessage(stream)
-	} Catch ex {
-		Set sc = ex.AsStatus()
+	#Dim attempts As %Integer = 0
+	
+	While attempts<2 {
+		Set attempts = attempts + 1
+		Try {
+			Do ..API.sendMessage(stream)
+			Return sc
+		} Catch ex {
+			#Dim ex As %Exception.General
+			If ($ZE["<ZJGTW>") {
+				Set sc = ..IsOpen()
+				Set:$$$ISERR(sc) sc = $$$ADDSC(sc, ex.AsStatus())
+			} Else {
+				Set sc = ex.AsStatus()
+			}
+			Return:$$$ISERR(sc) sc // quit if reconnect is unsuccessful or we got unknown exception 
+		}
 	}
 	Quit sc
 }
@@ -57,13 +70,25 @@ Method SendMessageToQueue(queue As %String, message As %Stream.Object) As %Statu
 	} Else {
 		Do stream.Write(..EncodeMessageBody(message))
 	}
+			
+	#Dim attempts As %Integer = 0
 	
-	Try {
-		Do ..API.sendMessageToQueue(queue, stream)
-	} Catch ex {
-		Set sc = ex.AsStatus()
+	While attempts<2 {
+		Set attempts = attempts + 1
+		Try {
+			Do ..API.sendMessageToQueue(queue, stream)
+			Return sc
+		} Catch ex {
+			#Dim ex As %Exception.General
+			If ($ZE["<ZJGTW>") {
+				Set sc = ..IsOpen()
+				Set:$$$ISERR(sc) sc = $$$ADDSC(sc, ex.AsStatus())
+			} Else {
+				Set sc = ex.AsStatus()
+			}
+			Return:$$$ISERR(sc) sc // quit if reconnect is unsuccessful or we got unknown exception 
+		}
 	}
-	Quit sc
 }
 
 Method EncodeMessageBody(body As %String) As %String

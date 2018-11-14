@@ -45,8 +45,18 @@ Property Encoding As %String;
 /// See property AdditionalPaths in that class.
 Property ClassPath As %String(MAXLEN = 32000);
 
+/// How many times have we tried reconnecting
+/// empty - do not retry
+/// 0 - retry ad infinitum
+/// n - retry n times
+Property RetryCount As %Integer [ InitialExpression = 5 ];
+
+/// How frequently to retry access to the output system.
+/// Pause in seconds between retry attempts.
+Property RetryInterval As %Numeric(MINVAL = 0) [ InitialExpression = 5 ];
+
 /// These are the production settings for this object
-Parameter SETTINGS = "Host:Basic,Port:Basic,VirtualHost:Basic,Queue:Basic,Credentials:Basic:credentialsSelector,JGHost:Java Gateway,JGPort:Java Gateway,JGService:Java Gateway:selector?context={Ens.ContextSearch/ProductionItems?targets=0&productionName=@productionId},ClassPath:Basic,Encoding:Basic";
+Parameter SETTINGS = "Host:Basic,Port:Basic,VirtualHost:Basic,Queue:Basic,Credentials:Basic:credentialsSelector,JGHost:Java Gateway,JGPort:Java Gateway,JGService:Java Gateway:selector?context={Ens.ContextSearch/ProductionItems?targets=0&productionName=@productionId},ClassPath:Basic,Encoding:Basic,RetryCount:Alerting,RetryInterval:Alerting";
 
 /// Connect to running JGW 
 Method Connect() As %Status
@@ -87,10 +97,40 @@ Method ConnectToRabbitMQ() As %Status
 		Set pass = "guest"
 	}
 	
+	Set port = $select(..Port="":-1, 1:..Port)
+	
 	Try {
-		Set ..API = ##class(isc.rabbitmq.API).%New(..JGW, ..Host, ..Port, user, pass, ..VirtualHost, ..Queue, $$$YES, ..Exchange)
+		Set ..API = ##class(isc.rabbitmq.API).%New(..JGW, ..Host, port, user, pass, ..VirtualHost, ..Queue, $$$YES, ..Exchange)
 	} Catch ex {
 		Set sc = $$$ADDSC(ex.AsStatus(),$g(%objlasterror))
+	}
+	
+	Quit sc
+}
+
+Method IsOpen() As %Status
+{
+	#Dim sc As %Status = $$$OK 
+	Set retryCount = 1
+	Try {
+		While '..API.isOpen() {
+			If ..RetryCount = "" {
+				Set sc = $$$ERROR($$$GeneralError, "Connection problems. Consider specifying RetryCount and RetryInterval settings")
+			} ElseIf ((..RetryCount = 0) || (retryCount < ..RetryCount)) {
+				// wait and retry connecting
+				Set retryCount = retryCount + 1
+				Hang ..RetryInterval
+				
+				// reconnect happens in isOpen method			
+			} Else {
+				// we're out of reconnect attempts
+				Set sc = $$$ERROR($$$GeneralError, $$$FormatText("Connection still closed after %1 attempts at reconnecting.", ..RetryCount))
+			}
+			Quit:$$$ISERR(sc)
+		}
+	} Catch ex {
+		#Dim ex As %Exception.General
+		Set sc = ex.AsStatus()
 	}
 	
 	Quit sc
