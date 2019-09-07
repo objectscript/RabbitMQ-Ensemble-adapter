@@ -1,21 +1,15 @@
-Class RabbitMQ.Common Extends %RegisteredObject [ Abstract ]
+Class isc.rabbitmq.Common Extends %RegisteredObject [ Abstract ]
 {
 
-/// This is the ID name of the set of credentials values (Username, Password) to be used to access the HTTP server
-/// Property Credentials As %String [ InitialExpression = "None" ];
-Property Host As %String [ InitialExpression = "localhost" ];
+/// Either host or Connection URI: amqp:\\
+/// If Connection URI is passed, then Port, Credentials and Virtual host properties are ignored.
+Property Host As %VarString [ InitialExpression = "localhost" ];
 
 Property Port As %Integer [ InitialExpression = -1 ];
 
 Property VirtualHost As %String [ InitialExpression = "/" ];
 
-/// Outbound adapter only (ignored for inbound adapter)
-/// If Exchange is not set, then Queue name.
-/// If Exchange is set, then Routing key.
 Property Queue As %String;
-
-/// Exchange name. Optional, empty by default.
-Property Exchange As %String;
 
 /// Config Name of the Java Gateway service controlling the Java Gateway server this item will use.
 /// Alternatively use JGHost and JGPort Settings, to specify Java gateway outside of Ensemble scope.
@@ -45,18 +39,8 @@ Property Encoding As %String;
 /// See property AdditionalPaths in that class.
 Property ClassPath As %String(MAXLEN = 32000);
 
-/// How many times have we tried reconnecting
-/// empty - do not retry
-/// 0 - retry ad infinitum
-/// n - retry n times
-Property RetryCount As %Integer [ InitialExpression = 5 ];
-
-/// How frequently to retry access to the output system.
-/// Pause in seconds between retry attempts.
-Property RetryInterval As %Numeric(MINVAL = 0) [ InitialExpression = 5 ];
-
 /// These are the production settings for this object
-Parameter SETTINGS = "Host:Basic,Port:Basic,VirtualHost:Basic,Queue:Basic,Credentials:Basic:credentialsSelector,JGHost:Java Gateway,JGPort:Java Gateway,JGService:Java Gateway:selector?context={Ens.ContextSearch/ProductionItems?targets=0&productionName=@productionId},ClassPath:Basic,Encoding:Basic,RetryCount:Alerting,RetryInterval:Alerting";
+Parameter SETTINGS = "Host:Basic,Port:Basic,VirtualHost:Basic,Queue:Basic,Credentials:Basic:credentialsSelector,JGHost:Java Gateway,JGPort:Java Gateway,JGService:Java Gateway:selector?context={Ens.ContextSearch/ProductionItems?targets=0&productionName=@productionId},ClassPath:Basic,Encoding:Basic";
 
 /// Connect to running JGW 
 Method Connect() As %Status
@@ -97,40 +81,10 @@ Method ConnectToRabbitMQ() As %Status
 		Set pass = "guest"
 	}
 	
-	Set port = $select(..Port="":-1, 1:..Port)
-	
 	Try {
-		Set ..API = ##class(isc.rabbitmq.API).%New(..JGW, ..Host, port, user, pass, ..VirtualHost, ..Queue, $$$YES, ..Exchange)
-	} Catch ex {
+		Set ..API = ##class(isc.rabbitmq.API).%New(..JGW, ..Host, ..Port, user, pass, ..VirtualHost, ..Queue, $$$YES)
+	} Catch ex {		
 		Set sc = $$$ADDSC(ex.AsStatus(),$g(%objlasterror))
-	}
-	
-	Quit sc
-}
-
-Method IsOpen() As %Status
-{
-	#Dim sc As %Status = $$$OK 
-	Set retryCount = 1
-	Try {
-		While '..API.isOpen() {
-			If ..RetryCount = "" {
-				Set sc = $$$ERROR($$$GeneralError, "Connection problems. Consider specifying RetryCount and RetryInterval settings")
-			} ElseIf ((..RetryCount = 0) || (retryCount < ..RetryCount)) {
-				// wait and retry connecting
-				Set retryCount = retryCount + 1
-				Hang ..RetryInterval
-				
-				// reconnect happens in isOpen method			
-			} Else {
-				// we're out of reconnect attempts
-				Set sc = $$$ERROR($$$GeneralError, $$$FormatText("Connection still closed after %1 attempts at reconnecting.", ..RetryCount))
-			}
-			Quit:$$$ISERR(sc)
-		}
-	} Catch ex {
-		#Dim ex As %Exception.General
-		Set sc = ex.AsStatus()
 	}
 	
 	Quit sc

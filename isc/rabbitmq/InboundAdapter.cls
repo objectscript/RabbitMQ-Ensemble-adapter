@@ -1,10 +1,17 @@
-Class RabbitMQ.InboundAdapter Extends (Ens.InboundAdapter, RabbitMQ.Common)
+Class isc.rabbitmq.InboundAdapter Extends (Ens.InboundAdapter, isc.rabbitmq.Common)
 {
 
 /// Stream class to store message body. Leave empty to use strings.
 Property BodyClass As %Dictionary.CacheClassname;
 
 Parameter SETTINGS = "BodyClass:Basic";
+
+ClassMethod BodyClassIsValid(val) As %Status
+{
+	quit:val="" $$$OK
+	quit:val="%Stream.GlobalCharacter" $$$OK
+	quit $$$ERROR($$$GeneralError, "No")
+}
 
 /// Establish gateway connection and init java API.
 Method OnInit() As %Status
@@ -28,43 +35,28 @@ Method OnTearDown() As %Status
 /// Get Messages from RabbitMQ queue.
 Method OnTask() As %Status
 {
-	#Dim sc As %Status = $$$OK 
+	Set sc = $$$OK
 	
 	Set messageCount = 1
 	
 	While messageCount > 0 {
-		Set sc = ..IsOpen()
-		Quit:$$$ISERR(sc)
-		
 		// List containing metainformation and possibly body (in the case of string interaction) of the RabbitMQ message 
 		#Dim messageList As %ListOfDataTypes 
 		
-		Set messageList = ##class(%ListOfDataTypes).%New()
-		For i=1:1:15 Do messageList.Insert("")
-
-		Try {
-			If ..BodyClass = "" {
-				Set messageList = ..API.readMessageString()
-			} Else {
-				#Dim tempStream As %Library.GlobalBinaryStream
-				Set tempStream = ..API.readMessageStream(.messageList)
-			}
-		} Catch ex {
-			#Dim ex As %Exception.General
-			If ($ZE["<ZJGTW>") {
-				Set sc = ..IsOpen()
-				Set:$$$ISERR(sc) sc = $$$ADDSC(sc, ex.AsStatus())
-			} Else {
-				Set sc = ex.AsStatus()
-			}
-			Quit:$$$ISERR(sc)
+		If ..BodyClass = "" {
+			Set messageList = ..API.readMessageString()
+		} Else {
+			#Dim tempStream As %Library.GlobalBinaryStream
+			Set messageList = ##class(%ListOfDataTypes).%New()
+			For i=1:1:15 Do messageList.Insert("")
+			Set tempStream = ..API.readMessageStream(.messageList)
 		}
 		
 		Set messageLength = messageList.GetAt(1)
 		Set messageCount = messageList.GetAt(2)
 		
 		If messageLength>0 {
-			#Dim message As RabbitMQ.Message
+			#Dim message As isc.rabbitmq.Message
 			Set message = ..ListToMessage(messageList)
 			If ..BodyClass = "" {
 				Set message.BodyString = ..DecodeMessageBody(messageList.GetAt(16))
@@ -86,9 +78,9 @@ Method OnTask() As %Status
 }
 
 /// Convert list containing metainformation into RabbitMQ message
-ClassMethod ListToMessage(list As %ListOfDataTypes) As RabbitMQ.Message
+ClassMethod ListToMessage(list As %ListOfDataTypes) As isc.rabbitmq.Message
 {
-	Set message = ##class(RabbitMQ.Message).%New()
+	Set message = ##class(isc.rabbitmq.Message).%New()
 	
 	Set message.ContentType = list.GetAt(3)
 	Set message.ContentEncoding = list.GetAt(4)

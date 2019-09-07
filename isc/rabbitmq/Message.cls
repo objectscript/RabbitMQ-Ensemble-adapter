@@ -1,4 +1,4 @@
-Class RabbitMQ.Message Extends %Persistent
+Class isc.rabbitmq.Message Extends %Persistent
 {
 
 Property ContentType As %String;
@@ -96,11 +96,11 @@ Storage Default
 <Value>BodyStream</Value>
 </Value>
 </Data>
-<DataLocation>^RabbitMQ.MessageD</DataLocation>
+<DataLocation>^isc.rabbitmq.MessageD</DataLocation>
 <DefaultData>MessageDefaultData</DefaultData>
-<IdLocation>^RabbitMQ.MessageD</IdLocation>
-<IndexLocation>^RabbitMQ.MessageI</IndexLocation>
-<StreamLocation>^RabbitMQ.MessageS</StreamLocation>
+<IdLocation>^isc.rabbitmq.MessageD</IdLocation>
+<IndexLocation>^isc.rabbitmq.MessageI</IndexLocation>
+<StreamLocation>^isc.rabbitmq.MessageS</StreamLocation>
 <Type>%Library.CacheStorage</Type>
 }
 
