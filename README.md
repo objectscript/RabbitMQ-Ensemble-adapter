@@ -28,7 +28,7 @@ Development is done on [Cache-Tort-Git UDL fork](https://github.com/MakarovS96/c
 
 ## Usage
 
-Check `RabbitMQ.Utils` for sample code. The main class is `isc.rabbitmq.API`. It has the following methods.
+Check `isc.rabbitmq.Utils` for sample code. The main class is `isc.rabbitmq.API`. It has the following methods.
 
 ### Methods
 
@@ -46,7 +46,7 @@ Check `RabbitMQ.Utils` for sample code. The main class is `isc.rabbitmq.API`. It
 | Argument      | Java type        | InterSystems type   | Value         | Required                                      | Description                             |
 |---------------|------------------|---------------------|---------------|-----------------------------------------------|-----------------------------------------|
 | gateway       | -                | %Net.Remote.Gateway | -             | Yes                                           | Connection to Java Gateway              |
-| host          | String           | %String             | localhost     | Yes                                           | Address of RabbitMQ server              |
+| host          | String           | %String             | localhost     | Yes                                           | Address of RabbitMQ server or `amqp:\\` connection string             |
 | port          | int              | %Integer            | -1            | Yes                                           | RabbitMQ listener port                  |
 | user          | String           | %String             | guest         | Yes                                           | Username                                |
 | pass          | String           | %String             | guest         | Yes                                           | Password                                |
@@ -111,19 +111,20 @@ Assuming you already  have `api` object, sending messages can be done by one of 
 
 #### Sending messages to default queue
 
-Default queue is a queue specified during creation of the `api` object. To send a message just call 
+Default queue is a queue specified during creation of the `api` object. To send a message just call `sendMessage` or `sendMessageId`:
 
 ```
 #Dim api As isc.rabbitmq.API
 #Dim msg As %GlobalBinaryStream
-Do api.sendMessage(msg, "correlationId", "messageId " _ $zdt($zts,3,1,3))
+Do api.sendMessage(msg)
+Do api.sendMessageId(msg, "correlationId", "messageId " _ $zdt($zts,3,1,3))
 ```
 
 Where `stream` is a message body. You can either provide both `messageId` and `correlationId` or non of them.
 
 #### Sending messages to specified queue
 
-Everything is the same as above, except you call `sendMessageToQueue` method and the first argument is the name of the queue.
+Everything is the same as above, except you call `sendMessageToQueue` \  `sendMessageToQueueId` method and the first argument is the name of the queue.
 
 ### Reading messages
 
