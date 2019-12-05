@@ -10,7 +10,20 @@ Parameter BUILDCLASSPATH = "D:\Cache\RabbitMQ\java\out\artifacts\RabbitMQjava_ja
 
 Parameter GATEWAY = "RabbitMQ";
 
-Parameter QUEUE = "hello5";
+Parameter QUEUE = "hello";
+
+/// Create JGW. Java home must point to 1.8 jre.
+/// Write $System.Status.GetErrorText(##class(isc.rabbitmq.Utils).CreateGateway())
+ClassMethod CreateGateway(gatewayName = {..#GATEWAY}, javaHome = {$SYSTEM.Util.GetEnviron("JAVA_HOME")}, path As %String = {..#CLASSPATH}, port As %Integer = 44444)
+{
+	set sys = ##class(%Net.Remote.ObjectGateway).%New()
+	set sys.Name = gatewayName
+	set sys.Type = 1
+	set sys.JavaHome = javaHome
+	set sys.ClassPath = path
+	set sys.Port = port
+	quit sys.%Save()
+}
 
 /// Load Jar from path.
 /// Write $System.Status.GetErrorText(##class(isc.rabbitmq.Utils).UpdateJar())
@@ -149,7 +162,7 @@ ClassMethod SendMsg(msg = "356") As %Status
         Set stream = ##class(%GlobalBinaryStream).%New()
         Do stream.Write(msg)
 		
-        Do api.sendMessageId(stream, "correlationId", "message " _ $zdt($zts,3,1,3))
+        Do api.sendMessage(stream)
         
 
         Set sc= gateway.%Disconnect()
