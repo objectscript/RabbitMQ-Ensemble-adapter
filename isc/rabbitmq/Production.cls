@@ -6,7 +6,7 @@ XData ProductionDefinition
 <Production Name="isc.rabbitmq.Production" TestingEnabled="true" LogGeneralTraceEvents="false">
   <Description></Description>
   <ActorPoolSize>2</ActorPoolSize>
-  <Item Name="isc.rabbitmq.Service" Category="" ClassName="RabbitMQ.Service" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="true" Schedule="">
+  <Item Name="isc.rabbitmq.Service" Category="" ClassName="isc.rabbitmq.Service" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="true" Schedule="">
     <Setting Target="Adapter" Name="JGService">EnsLib.JavaGateway.Service</Setting>
     <Setting Target="Adapter" Name="ClassPath">C:\InterSystems\RabbitMQjava.jar;C:\InterSystems\Java\amqp-client-5.7.2.jar</Setting>
     <Setting Target="Adapter" Name="Queue">hello</Setting>
@@ -20,7 +20,7 @@ XData ProductionDefinition
     <Setting Target="Host" Name="JavaHome">C:\Progra~1\Java\jdk1.8.0_121\</Setting>
     <Setting Target="Host" Name="ClassPath">C:\InterSystems\RabbitMQjava.jar;C:\InterSystems\Java\amqp-client-5.7.2.jar</Setting>
   </Item>
-  <Item Name="isc.rabbitmq.Operation" Category="" ClassName="RabbitMQ.Operation" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+  <Item Name="isc.rabbitmq.Operation" Category="" ClassName="isc.rabbitmq.Operation" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
     <Setting Target="Adapter" Name="JGService">EnsLib.JavaGateway.Service</Setting>
     <Setting Target="Adapter" Name="Queue">hello</Setting>
     <Setting Target="Adapter" Name="ClassPath">C:\InterSystems\RabbitMQjava.jar;C:\InterSystems\Java\amqp-client-5.7.2.jar</Setting>

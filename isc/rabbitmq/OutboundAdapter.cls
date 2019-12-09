@@ -41,7 +41,7 @@ Method SendMessage(message As %Stream.Object) As %Status
 	Try {
 		Do ..API.sendMessage(stream)
 	} Catch ex {
-		Set sc = ex.AsStatus()
+		Set sc = ..ExceptionToStatus(ex)
 	}
 	Quit sc
 }
@@ -63,7 +63,7 @@ Method SendMessageToQueue(queue As %String, message As %Stream.Object) As %Statu
 	Try {
 		Do ..API.sendMessageToQueue(queue, stream)
 	} Catch ex {
-		Set sc = ex.AsStatus()
+		Set sc = ..ExceptionToStatus(ex)
 	}
 	Quit sc
 }

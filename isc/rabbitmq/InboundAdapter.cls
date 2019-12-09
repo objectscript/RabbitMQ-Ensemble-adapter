@@ -44,13 +44,22 @@ Method OnTask() As %Status
 		#Dim messageList As %ListOfDataTypes 
 		
 		If ..BodyClass = "" {
-			Set messageList = ..API.readMessageString()
+			Try {
+				Set messageList = ..API.readMessageString()
+			} Catch ex {
+				Set sc = ..ExceptionToStatus(ex)
+			}
 		} Else {
 			#Dim tempStream As %Library.GlobalBinaryStream
 			Set messageList = ##class(%ListOfDataTypes).%New()
 			For i=1:1:15 Do messageList.Insert("")
-			Set tempStream = ..API.readMessageStream(.messageList)
+			Try {
+				Set tempStream = ..API.readMessageStream(.messageList)
+			} Catch ex {
+				Set sc = ..ExceptionToStatus(ex)
+			}
 		}
+		Quit:$$$ISERR(sc)
 		
 		Set messageLength = messageList.GetAt(1)
 		Set messageCount = messageList.GetAt(2)

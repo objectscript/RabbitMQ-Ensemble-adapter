@@ -83,11 +83,22 @@ Method ConnectToRabbitMQ() As %Status
 	
 	Try {
 		Set ..API = ##class(isc.rabbitmq.API).%New(..JGW, ..Host, ..Port, user, pass, ..VirtualHost, ..Queue, $$$YES)
-	} Catch ex {		
-		Set sc = $$$ADDSC(ex.AsStatus(),$g(%objlasterror))
+	} Catch ex {
+		Set sc = ..ExceptionToStatus(ex)
 	}
 	
 	Quit sc
+}
+
+Method ExceptionToStatus(ex As %Exception.General) As %Status
+{
+	#Dim sc As %Status
+	If ((ex.Name="<ZJGTW>") && $d(%objlasterror)) {
+		Set sc = %objlasterror
+	} Else {
+		Set sc = ex.AsStatus()
+	}
+    Quit sc
 }
 
 }
