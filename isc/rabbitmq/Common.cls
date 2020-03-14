@@ -90,6 +90,11 @@ Method ConnectToRabbitMQ() As %Status
 	}
 	
 	Try {
+		If $IsObject(..API) {
+			Do ..API.close()
+			Set ..API = $$$NULLOREF
+		}
+		
 		Set ..API = ##class(isc.rabbitmq.API).%New(..JGW, ..Host, ..Port, user, pass, ..VirtualHost, ..Queue, $$$YES, ..Exchange)
 	} Catch ex {
 		Set sc = ..ExceptionToStatus(ex)
