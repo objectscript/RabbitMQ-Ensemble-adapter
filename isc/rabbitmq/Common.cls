@@ -9,7 +9,15 @@ Property Port As %Integer [ InitialExpression = -1 ];
 
 Property VirtualHost As %String [ InitialExpression = "/" ];
 
+/// Outbound adapter only (ignored for inbound adapter)
+/// If Exchange is not set, then Queue name.
+/// If Exchange is set, then Routing Key.
 Property Queue As %String;
+
+/// Exchange name.
+/// Optional, empty by default.
+/// If set, Queue becomes Routing Key.
+Property Exchange As %String;
 
 /// Config Name of the Java Gateway service controlling the Java Gateway server this item will use.
 /// Alternatively use JGHost and JGPort Settings, to specify Java gateway outside of Ensemble scope.
@@ -40,7 +48,7 @@ Property Encoding As %String;
 Property ClassPath As %String(MAXLEN = 32000);
 
 /// These are the production settings for this object
-Parameter SETTINGS = "Host:Basic,Port:Basic,VirtualHost:Basic,Queue:Basic,Credentials:Basic:credentialsSelector,JGHost:Java Gateway,JGPort:Java Gateway,JGService:Java Gateway:selector?context={Ens.ContextSearch/ProductionItems?targets=0&productionName=@productionId},ClassPath:Basic,Encoding:Basic";
+Parameter SETTINGS = "Host:Basic,Port:Basic,VirtualHost:Basic,Queue:Basic,Exchange:Basic,Credentials:Basic:credentialsSelector,JGHost:Java Gateway,JGPort:Java Gateway,JGService:Java Gateway:selector?context={Ens.ContextSearch/ProductionItems?targets=0&productionName=@productionId},ClassPath:Basic,Encoding:Basic";
 
 /// Connect to running JGW 
 Method Connect() As %Status
@@ -82,7 +90,7 @@ Method ConnectToRabbitMQ() As %Status
 	}
 	
 	Try {
-		Set ..API = ##class(isc.rabbitmq.API).%New(..JGW, ..Host, ..Port, user, pass, ..VirtualHost, ..Queue, $$$YES)
+		Set ..API = ##class(isc.rabbitmq.API).%New(..JGW, ..Host, ..Port, user, pass, ..VirtualHost, ..Queue, $$$YES, ..Exchange)
 	} Catch ex {
 		Set sc = ..ExceptionToStatus(ex)
 	}
