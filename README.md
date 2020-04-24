@@ -19,12 +19,25 @@ Ensemble adapter for RabbitMQ
    Write ##class(%Dictionary.CompiledClass).%ExistsId(class)
 6. In the namespace `isc.rabbitmq.API` class should be present and compiled.
 7. Import [this project](https://github.com/intersystems-ru/RabbitMQ-Ensemble-adapter/releases) and compile.
-8. For samples refer to the test production `RabbitMQ.Production`.
+8. For samples refer to the test production `isc.rabbitMQ.Production`.
 
 
 ## Development
 
 Development is done on [Cache-Tort-Git UDL fork](https://github.com/MakarovS96/cache-tort-git)
+
+## Interoperability adapter
+
+`isc.rabbitmq` package provides all traditional Interoperability components: Inbound and Outbound Adapters and Operation/Service.
+
+For RabbitMQ to function Java Gateway is required. It can be run in three different ways:
+- As Interoperability Service
+- As Object Gateway from SMP
+- From OS bash
+
+For Interoperability production we recommend running Java Gateway as Interoperability Service. To do that add new `EnsLib.JavaGateway.Service` service to your production. In RabbitMQ production elements select Java Gateway Service name as a value for `JGService` setting.
+
+ClassPath for all these elements must contain the paths to amqp jar and RabbitMQ-Ensemble-javaapi jar.
 
 ## Usage
 
