@@ -1,0 +1,38 @@
+version: '3.7'
+services:
+  rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:3.8.1-management
+    init: true
+    ports:
+      - 15672:15672
+      - 5672:5672
+
+  nginx:
+    image: nginx
+    init: true
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 5673:5673
+
+#  jgw:
+#    environment:
+#      - JVMARGS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+#    build:
+#      context: java
+#      dockerfile: Dockerfile
+#    restart: always
+#    ports: 
+#      - 55555:55555
+#      - 5005:5005
+
+#  iris:
+#    init: true
+#    image: intersystemscommunity/pexdemo:latest
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - 52773:52773
+#      - 51773:51773
