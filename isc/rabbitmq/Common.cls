@@ -103,6 +103,28 @@ Method ConnectToRabbitMQ() As %Status
 	Quit sc
 }
 
+/// Reserve Close connection. 
+Method CloseConnection()
+{
+	#Include Ensemble
+	if $IsObject(..API) {
+		try {
+				do ..API.close()
+			} catch ex {
+				set sc = ..ExceptionToStatus(ex)
+				if $System.Status.GetErrorText(sc) [ "AlreadyClosedException" {
+					$$$TRACE("Caught AlreadyClosedException")
+					set sc = $$$OK
+				} else {
+					$$$LOGINFO($$$FormatText("CloseConnection unexpected exception: %1", $System.Status.GetErrorText(sc)))
+					set ..API = $$$NULLOREF
+					throw ex
+				}
+			}
+		set ..API = $$$NULLOREF
+	}
+}
+
 Method ExceptionToStatus(ex As %Exception.General) As %Status
 {
 	#Dim sc As %Status
